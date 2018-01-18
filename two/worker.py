@@ -1,5 +1,7 @@
 import pika;
 import sys;
+import time;
+
 
 credentials=pika.PlainCredentials("guest","guest");
 conn_param=pika.ConnectionParameters("localhost",credentials=credentials);
@@ -8,15 +10,10 @@ conn_broker=pika.BlockingConnection(conn_param);
 channel=conn_broker.channel();
 channel.queue_declare(queue="new_task");
 
-message=''.join(sys.argv[1:]) or "Hello this is default message please enter message after command";
+def callback(ch,method,properties,body):
+    print("Worker Received message:",body);
+    time.sleep(body.count(b'.'));
+    ch.basic_ack(delivery_tag=method.delivery_tag);
 
-channel.basic_publish(exchange='', routing_key="new_task",body=message,properties=pika.BasicProperties(
-    delivery_mode=2,
-    )
-    ,
-    );
-
-
-
-
-conn_broker.close();
+channel.basic_consume(callback,queue="new_task",no_ack=False);
+channel.start_consuming();
