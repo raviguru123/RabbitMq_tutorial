@@ -29,7 +29,6 @@ def callback(ch,method,property,body):
 
 
 channel.basic_qos(prefetch_count=1);
-# channel.basic_qos(prefetch_count=1);
 channel.basic_consume(callback,queue="rpc_queue");
 print("waiting for RPC call.....");
 channel.start_consuming();
