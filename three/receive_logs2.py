@@ -6,10 +6,6 @@ conn_param=pika.ConnectionParameters("localhost",credentials=credentials);
 conn_broker=pika.BlockingConnection(conn_param);
 channel=conn_broker.channel();
 
-
-
-
-
 channel.exchange_declare(exchange='logs',
                          exchange_type='fanout')
 result = channel.queue_declare(exclusive=True)
